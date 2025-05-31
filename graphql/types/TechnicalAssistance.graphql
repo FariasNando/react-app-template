@@ -1,0 +1,17 @@
+type TechnicalAssistenceResponse {
+  data: [TechnicalAssistenceData!]!
+  status: Int!
+}
+
+type TechnicalAssistenceData {
+  cidade: String
+  uf: String
+  endereco: String
+  firstPhone: String
+  nomeAssistencia: String
+  cep: String
+  secondPhone: String
+  razaoSocial: String
+  email: String
+  bairro: String
+}
