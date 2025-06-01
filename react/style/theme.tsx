@@ -1,0 +1,16 @@
+export const CSS_HANDLES: readonly string[] = [
+  'productSelectorContainer',
+  'productSelectorButton',
+  'productSelectorButtonSelected',
+  'selectedProductText',
+  'cepInput',
+  'cepInputButton',
+  'cityInput',
+  'cityInputButton',
+  'stateInput',
+  'form',
+  'tech_block',
+  'product_image',
+  'form_title',
+  'product_text',
+]

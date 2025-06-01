@@ -56,3 +56,11 @@ export async function fetchCities(state: string): Promise<string[]> {
 
   return data.map((c: { nome: string }) => c.nome)
 }
+
+export function maskCep(value: string) {
+  const v = value.replace(/\D/g, '').slice(0, 8)
+
+  if (v.length <= 5) return v
+
+  return `${v.slice(0, 5)}-${v.slice(5)}`
+}
