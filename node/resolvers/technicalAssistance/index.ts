@@ -18,6 +18,7 @@ export async function getTechnicalAssistence(
 
     if (postalCode) {
       const formattedPostalCode = postalCode.toString().padStart(8, '0')
+
       const technicalAssistence = await address.getAddress(formattedPostalCode)
 
       searchCity = technicalAssistence.city
@@ -25,8 +26,10 @@ export async function getTechnicalAssistence(
     }
 
     if (!searchCity || !searchUf) {
-      return { status: 400 }
+      return { data: [], status: 400 }
     }
+
+    const productField = product.toLowerCase()
 
     const data = await masterdata.searchDocuments({
       dataEntity: 'AT',
@@ -42,7 +45,7 @@ export async function getTechnicalAssistence(
         'email',
         'bairro',
       ],
-      where: `cidade="${searchCity}" AND uf="${searchUf}" AND ${product}=true`,
+      where: `cidade="${searchCity}" AND uf="${searchUf}" AND ${productField}=true`,
       pagination: {
         page: 1,
         pageSize: 100,
@@ -55,6 +58,7 @@ export async function getTechnicalAssistence(
     }
   } catch (error) {
     return {
+      data: [],
       status: 500,
     }
   }
