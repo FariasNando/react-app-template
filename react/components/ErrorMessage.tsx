@@ -5,7 +5,7 @@ interface ErrorMessageProps {
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => (
-  <p role="alert" style={{ color: 'red' }}>
+  <p role="alert" className="dark-red fw6 bg-washed-red pa2 br2 mb3">
     {message}
   </p>
 )
