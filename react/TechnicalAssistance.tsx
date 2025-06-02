@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useApolloClient } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 
@@ -48,66 +48,69 @@ const TechnicalAssistance: React.FC<TechnicalAssistanceSiteEditorProps> = ({
   const [loading, setLoading] = useState(false)
   const { handles } = useCssHandles(CSS_HANDLES)
 
-  const handleCheck = async ({
-    customCep,
-    customState,
-    customCity,
-    customProduct,
-  }: {
-    customCep?: string
-    customState?: string
-    customCity?: string
-    customProduct?: string
-  }) => {
-    setLoading(true)
-    const cepToCheck = customCep ?? cep
-    const stateToCheck = customState
-    const cityToCheck = customCity
-    const productToCheck = customProduct
+  const handleCheck = useCallback(
+    async ({
+      customCep,
+      customState,
+      customCity,
+      customProduct,
+    }: {
+      customCep?: string
+      customState?: string
+      customCity?: string
+      customProduct?: string
+    }) => {
+      setLoading(true)
+      const cepToCheck = customCep ?? cep
+      const stateToCheck = customState
+      const cityToCheck = customCity
+      const productToCheck = customProduct
 
-    if (cepToCheck && cepToCheck.length === 8) {
-      try {
-        const { data } = await client.query({
-          query: GET_TECHNICAL_ASSISTENCE,
-          variables: {
-            postalCode: Number(cepToCheck),
-            product: productToCheck,
-          },
-          fetchPolicy: 'network-only',
-        })
+      if (cepToCheck && cepToCheck.length === 8) {
+        try {
+          const { data } = await client.query({
+            query: GET_TECHNICAL_ASSISTENCE,
+            variables: {
+              postalCode: Number(cepToCheck),
+              product: productToCheck,
+            },
+            fetchPolicy: 'network-only',
+          })
 
-        setResult(data)
-        setError(null)
-      } catch (err) {
-        setError(err)
-        setResult(null)
-      } finally {
+          setResult(data)
+          setError(null)
+        } catch (err) {
+          setError(err)
+          setResult(null)
+        } finally {
+          setLoading(false)
+        }
+      } else if (stateToCheck && cityToCheck) {
+        try {
+          const { data } = await client.query({
+            query: GET_TECHNICAL_ASSISTENCE,
+            variables: {
+              product: productToCheck,
+              uf: stateToCheck,
+              city: cityToCheck,
+            },
+            fetchPolicy: 'network-only',
+          })
+
+          setResult(data)
+          setError(null)
+        } catch (err) {
+          setError(err)
+          setResult(null)
+        } finally {
+          setLoading(false)
+        }
+      } else {
         setLoading(false)
       }
-    } else if (stateToCheck && cityToCheck) {
-      try {
-        const { data } = await client.query({
-          query: GET_TECHNICAL_ASSISTENCE,
-          variables: {
-            product: productToCheck,
-            uf: stateToCheck,
-            city: cityToCheck,
-          },
-          fetchPolicy: 'network-only',
-        })
-
-        setResult(data)
-        setError(null)
-      } catch (err) {
-        setError(err)
-        setResult(null)
-      } finally {
-        setLoading(false)
-      }
-    } else {
-      setLoading(false)
-    }
-  }
+    },
+    [cep, client]
+  )
 
   const renderResult = () => {
     if (loading) {
@@ -158,6 +161,9 @@ const TechnicalAssistance: React.FC<TechnicalAssistanceSiteEditorProps> = ({
         onSelect={(item) => {
           setSelectedProduct(item)
           setShowForm(true)
+          setResult(null)
+          setError(null)
+          setShowAll(false)
         }}
       />
       {showForm && (

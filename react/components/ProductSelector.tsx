@@ -12,33 +12,33 @@ interface ProductSelectorItem {
 interface ProductSelectorProps {
   items: ProductSelectorItem[]
   selected: string
-  onSelect: (item: { value: string; text: string }) => void
+  onSelect: (item: ProductSelectorItem) => void
 }
 
-const ProductSelector = ({
+const ProductSelector: React.FC<ProductSelectorProps> = ({
   items,
   selected,
   onSelect,
-}: ProductSelectorProps) => {
+}) => {
   const { handles } = useCssHandles(CSS_HANDLES)
 
   return (
     <div
-      className={`flex flex-wrap justify-center .items-center ${handles.productSelectorContainer}`}
+      className={`flex flex-wrap justify-center items-center ${handles.productSelectorContainer}`}
     >
       {items.map((item) => {
         const isSelected = selected === item.text
 
         return (
           <button
-            key={item.text}
+            key={item.value}
             type="button"
             className={`flex flex-column items-center bn pointer bg-white ${handles.productSelectorButton
               }${isSelected
                 ? ` ${handles.productSelectorButtonSelected} b--blue bb bw2`
                 : ''
               }`}
-            onClick={() => onSelect({ value: item.value, text: item.text })}
+            onClick={() => onSelect(item)}
             aria-pressed={isSelected}
           >
             <img
@@ -47,6 +47,7 @@ const ProductSelector = ({
               className={`${handles.product_image} h3 mb2`}
               width={55}
               height={55}
+              loading="lazy"
             />
             <span className={`${handles.product_text} fw f7 black`}>
               {item.text}
@@ -58,4 +59,4 @@ const ProductSelector = ({
   )
 }
 
-export default ProductSelector
+export default React.memo(ProductSelector)

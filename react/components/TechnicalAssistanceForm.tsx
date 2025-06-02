@@ -33,12 +33,10 @@ const TechnicalAssistanceForm: React.FC<TechnicalAssistanceFormProps> = ({
   const [showError, setShowError] = useState(false)
   const { handles } = useCssHandles(CSS_HANDLES)
 
-  // Busca estados do IBGE
   useEffect(() => {
     fetchStates().then(setStates)
   }, [])
 
-  // Busca cidades do IBGE ao selecionar estado
   useEffect(() => {
     if (state) {
       fetchCities(state).then(setCities)
@@ -48,31 +46,40 @@ const TechnicalAssistanceForm: React.FC<TechnicalAssistanceFormProps> = ({
     }
   }, [state])
 
-  const handleChangeCep = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCep(e.target.value)
-  }
+  const handleChangeCep = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCep(e.target.value)
+    },
+    [setCep]
+  )
 
-  const handleSubmitCep = (e: React.FormEvent) => {
-    e.preventDefault()
-    const cleanCep = cep.replace(/\D/g, '')
+  const handleSubmitCep = React.useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      const cleanCep = cep.replace(/\D/g, '')
 
-    if (cleanCep.length === 8) {
-      onSubmit({ cep: cleanCep, product })
-      setShowError(false)
-    } else {
-      setShowError(true)
-    }
-  }
+      if (cleanCep.length === 8) {
+        onSubmit({ cep: cleanCep, product })
+        setShowError(false)
+      } else {
+        setShowError(true)
+      }
+    },
+    [cep, onSubmit, product]
+  )
 
-  const handleSubmitCity = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (state && city) {
-      onSubmit({ cep: '', state, city, product })
-      setShowError(false)
-    } else {
-      setShowError(true)
-    }
-  }
+  const handleSubmitCity = React.useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      if (state && city) {
+        onSubmit({ cep: '', state, city, product })
+        setShowError(false)
+      } else {
+        setShowError(true)
+      }
+    },
+    [state, city, onSubmit, product]
+  )
 
   return (
     <form
@@ -80,6 +87,7 @@ const TechnicalAssistanceForm: React.FC<TechnicalAssistanceFormProps> = ({
       itemType="https://schema.org/SearchAction"
       aria-label="Buscar assistência técnica pelo CEP ou Estado/Cidade"
       className={`${handles.form} w-100 ph6`}
+      autoComplete="off"
     >
       <div className="flex flex-column items-center flex-wrap">
         <div className="w-100 mb4">

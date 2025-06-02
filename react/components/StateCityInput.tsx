@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 
 import ArrowRightIcon from './ArrowRightIcon'
@@ -24,7 +24,7 @@ const StateCityInput: React.FC<StateCityInputProps> = ({
   states,
   cities,
   onSubmit,
-  disabled,
+  disabled = false,
 }) => {
   const [cityInput, setCityInput] = useState(city)
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -35,30 +35,39 @@ const StateCityInput: React.FC<StateCityInputProps> = ({
     ? cities.filter((c) => c.toLowerCase().includes(cityInput.toLowerCase()))
     : cities
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCityInput(e.target.value)
-    setShowSuggestions(true)
-    setCity('')
-  }
+  const handleCityChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCityInput(e.target.value)
+      setShowSuggestions(true)
+      setCity('')
+    },
+    [setCity]
+  )
 
-  const handleSelectCity = (selectedCity: string) => {
-    setCity(selectedCity)
-    setCityInput(selectedCity)
-    setShowSuggestions(false)
-  }
+  const handleSelectCity = useCallback(
+    (selectedCity: string) => {
+      setCity(selectedCity)
+      setCityInput(selectedCity)
+      setShowSuggestions(false)
+    },
+    [setCity]
+  )
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setTimeout(() => setShowSuggestions(false), 100)
-  }
+  }, [])
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && filteredCities.length > 0) {
-      handleSelectCity(filteredCities[0])
-      e.preventDefault()
-    }
-  }
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && filteredCities.length > 0) {
+        handleSelectCity(filteredCities[0])
+        e.preventDefault()
+      }
+    },
+    [filteredCities, handleSelectCity]
+  )
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCityInput(city)
   }, [city])
 
@@ -85,7 +94,11 @@ const StateCityInput: React.FC<StateCityInputProps> = ({
         </span>
       </div>
       <div className="relative mt4">
-        <form onSubmit={onSubmit} className="flex items-end w-100">
+        <form
+          onSubmit={onSubmit}
+          className="flex items-end w-100"
+          autoComplete="off"
+        >
           <div className="w-100 relative">
             <input
               id="city"
@@ -109,14 +122,15 @@ const StateCityInput: React.FC<StateCityInputProps> = ({
             {showSuggestions && filteredCities.length > 0 && (
               <ul className="absolute z-999 bg-white ba b--moon-gray br2 mt1 pa0 list w-100 max-h5 overflow-auto shadow-1">
                 {filteredCities.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    className="pa2 pointer hover-bg-light-blue db w-100 tl bn bg-transparent"
-                    onMouseDown={() => handleSelectCity(c)}
-                  >
-                    {c}
-                  </button>
+                  <li key={c}>
+                    <button
+                      type="button"
+                      className="pa2 pointer db w-100 tl bn bg-transparent"
+                      onMouseDown={() => handleSelectCity(c)}
+                    >
+                      {c}
+                    </button>
+                  </li>
                 ))}
               </ul>
             )}
@@ -127,7 +141,7 @@ const StateCityInput: React.FC<StateCityInputProps> = ({
             disabled={
               !state ||
               !cityInput ||
-              (disabled ?? false) ||
+              disabled ||
               !filteredCities.includes(cityInput)
             }
             className={`h2 w2 flex items-center justify-center white pointer ${handles.cityInputButton}`}
@@ -140,4 +154,4 @@ const StateCityInput: React.FC<StateCityInputProps> = ({
   )
 }
 
-export default StateCityInput
+export default React.memo(StateCityInput)
