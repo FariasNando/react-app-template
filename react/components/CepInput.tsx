@@ -26,7 +26,11 @@ const CepInput: React.FC<CepInputProps> = ({
       className="flex items-end w-100 justify-center mb5"
     >
       <div className="flex-auto w-100">
-        <label htmlFor="cep" itemProp="query-input" className="db mb5 tc">
+        <label
+          htmlFor="cep"
+          itemProp="query-input"
+          className={`${handles.cep_label} db mb5 tc`}
+        >
           Insira seu cep
         </label>
         <input

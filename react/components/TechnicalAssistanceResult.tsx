@@ -1,7 +1,7 @@
 import React from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 
-import { getAddressString, getPhonesString } from '../utils'
+import { getAddressLines } from '../utils/getAddressLines'
 import { CSS_HANDLES } from '../style/theme'
 
 interface TechnicalAssistanceResultProps {
@@ -19,45 +19,50 @@ interface TechnicalAssistanceResultProps {
   }
 }
 
+type AddressLine = { icon?: string; text: string }
+
 const TechnicalAssistanceResult: React.FC<TechnicalAssistanceResultProps> = ({
   assist,
 }) => {
   const { handles } = useCssHandles(CSS_HANDLES)
+  const lines = getAddressLines(assist) as AddressLine[]
 
   return (
     <div
-      className={`${handles.tech_block} pa7 mb3 shadow-1`}
+      className={`${handles.tech_block} pa7 mb3`}
       itemScope
       itemType="https://schema.org/LocalBusiness"
     >
       {assist.nomeAssistencia && (
-        <h2 className="f4 fw6 mb2 dark-blue" itemProp="name">
+        <h2 className={`f6 fw6 ma0 ${handles.tech_name}`} itemProp="name">
           {assist.nomeAssistencia}
         </h2>
       )}
       {assist.razaoSocial && (
-        <p className="mb1 gray" itemProp="legalName">
+        <p className={`ma0 f7 ${handles.tech_legalName}`} itemProp="legalName">
           Razão Social: {assist.razaoSocial}
         </p>
       )}
 
-      {getAddressString(assist) && (
-        <p className="mb1" itemProp="address">
-          {getAddressString(assist)}
-        </p>
-      )}
-
-      {getPhonesString(assist) && (
-        <p className="mb1" itemProp="telephone">
-          {getPhonesString(assist)}
-        </p>
-      )}
-
-      {assist.email && (
-        <p className="mb0" itemProp="email">
-          {assist.email}
-        </p>
-      )}
+      {Array.isArray(lines) &&
+        lines.map((line, idx) => (
+          <div
+            key={idx}
+            className={`flex items-start mb1 ${handles.tech_line}`}
+          >
+            {line.icon && (
+              <img
+                src={line.icon}
+                alt=""
+                className={`mr2 ${handles.tech_icon}`}
+                width={16}
+                height={16}
+                loading="lazy"
+              />
+            )}
+            <span className={handles.tech_lineText}>{line.text}</span>
+          </div>
+        ))}
     </div>
   )
 }

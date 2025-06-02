@@ -13,4 +13,12 @@ export const CSS_HANDLES: readonly string[] = [
   'product_image',
   'form_title',
   'product_text',
+  'tech_name',
+  'tech_legalName',
+  'tech_address',
+  'tech_phones',
+  'tech_email',
+  'tech_line',
+  'tech_icon',
+  'cep_label',
 ]

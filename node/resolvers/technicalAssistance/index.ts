@@ -29,8 +29,6 @@ export async function getTechnicalAssistence(
       return { data: [], status: 400 }
     }
 
-    const productField = product.toLowerCase()
-
     const data = await masterdata.searchDocuments({
       dataEntity: 'AT',
       fields: [
@@ -45,7 +43,7 @@ export async function getTechnicalAssistence(
         'email',
         'bairro',
       ],
-      where: `cidade="${searchCity}" AND uf="${searchUf}" AND ${productField}=true`,
+      where: `cidade="${searchCity}" AND uf="${searchUf}" AND ${product}=true`,
       pagination: {
         page: 1,
         pageSize: 100,

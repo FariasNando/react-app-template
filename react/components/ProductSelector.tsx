@@ -6,12 +6,13 @@ import { CSS_HANDLES } from '../style/theme'
 interface ProductSelectorItem {
   image: string
   text: string
+  value: string
 }
 
 interface ProductSelectorProps {
   items: ProductSelectorItem[]
   selected: string
-  onSelect: (text: string) => void
+  onSelect: (item: { value: string; text: string }) => void
 }
 
 const ProductSelector = ({
@@ -37,7 +38,7 @@ const ProductSelector = ({
                 ? ` ${handles.productSelectorButtonSelected} b--blue bb bw2`
                 : ''
               }`}
-            onClick={() => onSelect(item.text)}
+            onClick={() => onSelect({ value: item.value, text: item.text })}
             aria-pressed={isSelected}
           >
             <img

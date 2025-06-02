@@ -14,15 +14,28 @@ import GET_TECHNICAL_ASSISTENCE from './graphql/queries/GetTechnicalAssistence.g
 interface TechnicalAssistanceSiteEditorProps {
   items?: Array<{ image: string; text: string; value: string }>
 }
+interface TechnicalAssistanceResultType {
+  nomeAssistencia?: string
+  endereco?: string
+  bairro?: string
+  cidade?: string
+  uf?: string
+  cep?: string
+  firstPhone?: string
+  secondPhone?: string
+  email?: string
+  razaoSocial?: string
+}
 
 const TechnicalAssistance: React.FC<TechnicalAssistanceSiteEditorProps> = ({
   items,
 }) => {
   const client = useApolloClient()
   const [cep, setCep] = useState('')
-  const [selectedProduct, setSelectedProduct] = useState(
-    items?.[0]?.value ?? ''
-  )
+  const [selectedProduct, setSelectedProduct] = useState<{
+    value: string
+    text: string
+  } | null>(items?.[0] ? { value: items[0].value, text: items[0].text } : null)
 
   const [showForm, setShowForm] = useState(false)
 
@@ -50,7 +63,7 @@ const TechnicalAssistance: React.FC<TechnicalAssistanceSiteEditorProps> = ({
     const cepToCheck = customCep ?? cep
     const stateToCheck = customState
     const cityToCheck = customCity
-    const productToCheck = customProduct ?? 'cooktop'
+    const productToCheck = customProduct
 
     if (cepToCheck && cepToCheck.length === 8) {
       try {
@@ -141,9 +154,9 @@ const TechnicalAssistance: React.FC<TechnicalAssistanceSiteEditorProps> = ({
     <section className="flex flex-column items-center">
       <ProductSelector
         items={items ?? []}
-        selected={selectedProduct}
-        onSelect={(value) => {
-          setSelectedProduct(value)
+        selected={selectedProduct?.text ?? ''}
+        onSelect={(item) => {
+          setSelectedProduct(item)
           setShowForm(true)
         }}
       />
@@ -153,46 +166,32 @@ const TechnicalAssistance: React.FC<TechnicalAssistanceSiteEditorProps> = ({
             <span className="f5 fw5 db mb2 tc">
               Encontre uma assistência técnica autorizada Franke para:
             </span>
-            {selectedProduct && (
+            {selectedProduct?.text && (
               <span
                 className={`${handles.selectedProductText} f5 fw6 db mv7 mh0 tc ttu`}
               >
-                {selectedProduct}
+                {selectedProduct.text}
               </span>
             )}
           </div>
           <TechnicalAssistanceForm
-            onSubmit={({ cep: formCep, state, city, product }) =>
+            onSubmit={({ cep: formCep, state, city }) =>
               handleCheck({
                 customCep: formCep,
                 customState: state,
                 customCity: city,
-                customProduct: product,
+                customProduct: selectedProduct?.value,
               })
             }
             cep={cep}
             setCep={setCep}
-            product={selectedProduct}
+            product={selectedProduct?.value ?? ''}
           />
         </>
       )}
       <div>{renderResult()}</div>
     </section>
   )
-}
-
-// Tipagem para os dados de assistência técnica
-interface TechnicalAssistanceResultType {
-  nomeAssistencia?: string
-  endereco?: string
-  bairro?: string
-  cidade?: string
-  uf?: string
-  cep?: string
-  firstPhone?: string
-  secondPhone?: string
-  email?: string
-  razaoSocial?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -218,6 +217,11 @@ TechnicalAssistance.schema = {
           text: {
             type: 'string',
             title: 'Texto',
+          },
+          value: {
+            type: 'string',
+            title: 'Valor',
+            description: 'Identificador do produto, usado para busca',
           },
         },
       },
