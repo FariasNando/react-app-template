@@ -1,0 +1,27 @@
+query GetTechnicalAssistence(
+  $product: String!
+  $postalCode: Int
+  $city: String
+  $uf: String
+) {
+  getTechnicalAssistence(
+    product: $product
+    postalCode: $postalCode
+    city: $city
+    uf: $uf
+  ) {
+    data {
+      cidade
+      uf
+      endereco
+      firstPhone
+      nomeAssistencia
+      cep
+      secondPhone
+      razaoSocial
+      email
+      bairro
+    }
+    status
+  }
+}

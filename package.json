@@ -1,45 +1,52 @@
 {
-  "version": "0.0.0",
-  "name": "CHANGE_ME",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "lint": "eslint --ext js,jsx,ts,tsx .",
+    "postinstall": "husky",
+    "commit": "cz",
+    "lint": "eslint \"**/*.{ts,tsx,js,jsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx,js,jsx}\"",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
-    "lint:locales": "intl-equalizer",
-    "test": "cd ./react && yarn test"
+    "stylelint": "stylelint \"**/*.css\"",
+    "stylelint:fix": "stylelint --fix \"**/*.css\"",
+    "test": "cd ./react && yarn test",
+    "test:coverage": "cd ./react && yarn test:coverage",
+    "test:watch": "cd ./react && yarn test:watch"
   },
-  "intl-equalizer": {
-    "referenceLocale": "en",
-    "localeDirectory": "messages"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+  "devDependencies": {
+    "@commitlint/cli": "^19.2.2",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@vtex/prettier-config": "^1.0.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.57.0",
+    "eslint-config-vtex": "^15.0.2",
+    "eslint-config-vtex-react": "^9.0.3",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^2.8.7",
+    "stylelint": "^15.4.0",
+    "stylelint-config-standard": "^32.0.0",
+    "stylelint-order": "^6.0.3",
+    "typescript": "3.9.7"
   },
   "lint-staged": {
-    "*.{ts,js,tsx,jsx}": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.json": [
+    "*.css": [
+      "stylelint --fix",
       "prettier --write"
     ],
-    "messages/*.json": [
-      "yarn lint:locales"
-    ]
+    "*.{json,jsonc,graphql,gql}": "prettier --write"
   },
-  "devDependencies": {
-    "@vtex/intl-equalizer": "^2.5.0",
-    "@vtex/prettier-config": "^0.3.5",
-    "eslint": "^7.14.0",
-    "eslint-config-vtex": "^12.8.11",
-    "eslint-config-vtex-react": "^6.8.3",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.5.1",
-    "prettier": "^2.2.0",
-    "typescript": "^3.9.6",
-    "@vtex/danger": "^0.2.7"
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "@vtex/api": "6.48.0"
   }
 }

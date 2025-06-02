@@ -1,0 +1,8 @@
+type Query {
+  getTechnicalAssistence(
+    product: String!
+    postalCode: Int
+    city: String
+    uf: String
+  ): TechnicalAssistenceResponse!
+}
